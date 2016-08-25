@@ -7,4 +7,5 @@ public interface MutableList<E>{
   public void removeEntry(E entry);
   public void replaceEntry(E oldEntry, E newEntry);
   public void save();  
+  public void load();
 }

@@ -2,6 +2,7 @@ package org.addressbook.storage;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.io.*;
 
 public class AddressBook implements MutableList<Contact>{
   private List<Contact> entries;
@@ -33,7 +34,34 @@ public class AddressBook implements MutableList<Contact>{
     entries.remove(old);
     entries.add(newContact);
   }
+  public void load(){
+    try{
+      ObjectInputStream in = new ObjectInputStream(new FileInputStream("/tmp/addressbook.apa"));
+      Contact c;
+      entries = (List<Contact>)in.readObject();
+      /*
+      while( (c=(Contact)in.readObject())!=null){
+        entries.add(c);
+      }
+      */
+      in.close();
+    }catch(Exception e){
+      e.printStackTrace();
+    }
+  }
   public void save(){
-    System.out.println("Saving.... totally fake...");
+    try{
+      System.out.println("Saving in /tmp/addressbook.apa ...");
+      ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream("/tmp/addressbook.apa"));
+      out.writeObject(entries);
+      /*
+      for(Contact c : entries){
+        out.writeObject(c);
+      }
+      */
+      out.close();
+    }catch(Exception e){
+      e.printStackTrace();
+    }
   }
 }
