@@ -3,17 +3,44 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.io.*;
+import java.util.Iterator;
 
 public class AddressBook implements MutableList<Contact>{
+
+  private static final String ADDRESS_FILE = 
+    System.getProperty("user.home") +
+    System.getProperty("file.separator") +
+    ".address_book";
+  
   private List<Contact> entries;
   
   public AddressBook(){
     entries = new ArrayList<>();
   }
   
+  public Contact getEntry(int index){
+    return entries.get(index);
+  }
+  
+  public Iterator<Contact> search(String query){    
+    ArrayList<Contact> results = new ArrayList<>();
+    for(Contact c : entries){
+      if(c.name().toLowerCase()
+         .startsWith(query.toLowerCase())){
+        results.add(c);
+      }
+    }
+    return results.iterator();
+  }
+
+  public int numberOfEntries(){
+    return entries.size();
+  }
+
   public void listEntries(){
     List<Contact> copy = new ArrayList<>(entries);
     Collections.sort(copy);
+    int entryNumber = 0;
     for(Contact c : copy){
       System.out.println(c);
     }
@@ -34,31 +61,31 @@ public class AddressBook implements MutableList<Contact>{
     entries.remove(old);
     entries.add(newContact);
   }
+
+  @SuppressWarnings("unchecked")
   public void load(){
     try{
-      ObjectInputStream in = new ObjectInputStream(new FileInputStream("/tmp/addressbook.apa"));
+      if (!new File(ADDRESS_FILE).exists()){
+        System.out.println("INFO: There is no address book file.");
+        return;
+      }
+      ObjectInputStream in = 
+        new ObjectInputStream(new FileInputStream
+                              (ADDRESS_FILE));
       Contact c;
       entries = (List<Contact>)in.readObject();
-      /*
-      while( (c=(Contact)in.readObject())!=null){
-        entries.add(c);
-      }
-      */
       in.close();
     }catch(Exception e){
+      System.err.println("Could not load address book");
       e.printStackTrace();
+      throw new RuntimeException("Your address book is corrupted.");
     }
   }
   public void save(){
     try{
-      System.out.println("Saving in /tmp/addressbook.apa ...");
-      ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream("/tmp/addressbook.apa"));
+      System.out.println("Saving in " + ADDRESS_FILE + "...");
+      ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(ADDRESS_FILE));
       out.writeObject(entries);
-      /*
-      for(Contact c : entries){
-        out.writeObject(c);
-      }
-      */
       out.close();
     }catch(Exception e){
       e.printStackTrace();

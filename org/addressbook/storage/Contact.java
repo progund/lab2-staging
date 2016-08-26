@@ -43,13 +43,10 @@ public final class Contact implements Serializable, Comparable<Contact>{
       return false;
     }
     Contact otherContact = (Contact)other;
-    return otherContact.name.equals(name) 
-      && otherContact.email.equals(email) 
-      && otherContact.phone.equals(phone);
+    return otherContact.name.equals(name); 
   }
   @Override
   public int hashCode(){
-    return 31*name.hashCode() * email.hashCode()
-      * phone.hashCode();
+    return name.hashCode();
   }
 }
