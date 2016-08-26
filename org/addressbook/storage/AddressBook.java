@@ -77,7 +77,11 @@ public class AddressBook implements MutableList<Contact>{
       in.close();
     }catch(Exception e){
       System.err.println("Could not load address book");
-      e.printStackTrace();
+      try{
+        e.printStackTrace(new PrintWriter(new FileWriter("/home/rikard/addressbook.log"),true));
+      }catch(Exception ignoramus){
+        System.err.println("error log couldn't be written");
+      }
       throw new RuntimeException("Your address book is corrupted.");
     }
   }
